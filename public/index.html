@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Message Sender</title>
+    <link rel="stylesheet" href="style.css"> <!-- Optional: Link to external CSS -->
+</head>
+<body>
+    <div class="container">
+        <h2>Instagram Message Sender</h2>
+        <form id="messageForm">
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Instagram Username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Instagram Password" required>
+            </div>
+            <div class="form-group">
+                <select id="type" required>
+                    <option value="inbox">Direct Message</option>
+                    <option value="group">Group Message</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="target" placeholder="Target Username/Thread ID" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="haterName" placeholder="Hater's Name" required>
+            </div>
+            <div class="form-group">
+                <input type="file" id="messageFile" accept=".txt" required>
+            </div>
+            <div class="form-group">
+                <input type="number" id="delay" placeholder="Delay (ms)" value="1000" required>
+            </div>
+            <button type="submit">Start Sending</button>
+        </form>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        document.getElementById('messageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('status');
+            status.textContent = 'Starting...';
+            
+            const formData = new FormData();
+            formData.append('username', document.getElementById('username').value);
+            formData.append('password', document.getElementById('password').value);
+            formData.append('type', document.getElementById('type').value);
+            formData.append('target', document.getElementById('target').value);
+            formData.append('haterName', document.getElementById('haterName').value);
+            formData.append('delay', document.getElementById('delay').value);
+            formData.append('messageFile', document.getElementById('messageFile').files[0]);
+
+            try {
+                const response = await fetch('/send', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.text();
+                status.textContent = result;
+            } catch (error) {
+                status.textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
